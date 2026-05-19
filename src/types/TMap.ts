@@ -1,0 +1,1 @@
+export type TMap = "spacecon" | "undrcty" | "universe11";
