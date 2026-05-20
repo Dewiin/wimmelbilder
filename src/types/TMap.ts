@@ -1,1 +1,5 @@
-export type TMap = "spacecon" | "undrcty" | "universe11";
+export type TMap = {
+    name: string,
+    imageUrl: string,
+    description: string,
+}
