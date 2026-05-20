@@ -21,7 +21,7 @@ export function HomeScreen() {
 
     useEffect(() => {
         getMaps(setMaps);
-    }, []);
+    }, [maps]);
 
     return (
         <>
