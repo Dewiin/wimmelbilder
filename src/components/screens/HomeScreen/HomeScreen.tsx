@@ -12,6 +12,10 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel"
 import { GameCard } from "./GameCard"
+import { GameCardSkeleton } from "@/components/skeletons/GameCardSkeleton"
+
+// contexts
+import { useUI } from "@/contexts/UIContext"
 
 // motion
 import { AnimatePresence, motion } from "motion/react"
@@ -22,9 +26,10 @@ import type { TMap } from "@/types/TMap"
 export function HomeScreen() {
     const [ show, setShow ] = useState<boolean>(true);
     const [ maps, setMaps ] = useState<TMap[]>([]);
+    const { isLoading, setIsLoading } = useUI();
 
     useEffect(() => {
-        if(maps.length == 0) getMaps(setMaps);
+        if(maps.length == 0) getMaps(setMaps, setIsLoading);
     }, [maps]);
 
     return (
@@ -42,17 +47,26 @@ export function HomeScreen() {
                     </p>
                     <Carousel className="w-full md:max-w-lg max-w-xs">
                         <CarouselContent>
-                            {maps.map((map, index) => (
-                                <CarouselItem key={index}>
-                                    <GameCard map={map} setShow={setShow} />
-                                </CarouselItem>
-                            ))}
+                            {isLoading &&
+                            <CarouselItem>
+                                <GameCardSkeleton />
+                            </CarouselItem>
+                            }
+                            {!isLoading &&
+                            <>
+                                {maps.map((map, index) => (
+                                    <CarouselItem key={index}>
+                                        <GameCard map={map} setShow={setShow} />
+                                    </CarouselItem>
+                                ))}
+                            </>
+                            }
                         </CarouselContent>
                         <CarouselNext />
                         <CarouselPrevious />
                     </Carousel>
-                </motion.div>   
-                }
+                </motion.div>  
+                } 
             </AnimatePresence>
         </>
     )
