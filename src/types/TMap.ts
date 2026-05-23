@@ -1,5 +1,5 @@
 export type TMap = {
-    name: string,
-    imageUrl: string,
-    description: string,
+    name: string
+    imageUrl: string
+    description: string
 }
