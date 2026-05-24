@@ -8,23 +8,31 @@ import { Button } from "@/components/ui/button"
 import { AnimatePresence, motion } from "motion/react"
 
 // types
+import type React from "react"
+import type { SetStateAction } from "react"
 import type { TCoords } from "@/types/TCoords"
 
-export function GameDropdown({ coords }: { coords: TCoords }) {
+export function GameDropdown({ coords, setMenuOpen }: { coords: TCoords, setMenuOpen: React.Dispatch<SetStateAction<boolean>> }) {
     const navigate = useNavigate();
 
     return (
         <AnimatePresence>
             <motion.div 
                 initial={{ opacity: 0, scale: 0.75 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.75 }}
-                transition={{ duration: 0.05 }}
-                className="absolute w-3xs"
-                style={{
-                    left: coords.x,
-                    top: coords.y
+                animate={{ 
+                    opacity: 1,
+                    scale: 1, 
+                    x: coords.x,
+                    y: coords.y
                 }}
+                exit={{ opacity: 0, scale: 0.75 }}
+                transition={{
+                    type: "spring",
+                    stiffness: 700,
+                    damping: 40,
+                }}
+                style={{ left: 0, top: 0 }}
+                className="absolute w-3xs"
             >
                 <div className=" 
                     flex flex-col 
@@ -35,6 +43,13 @@ export function GameDropdown({ coords }: { coords: TCoords }) {
                     <Button variant="ghost" className="justify-start text-sm">Item 2</Button>
                     <Button variant="ghost" className="justify-start text-sm">Item 3</Button>
                     <Separator className="my-1" />
+                    <Button 
+                        variant="ghost" 
+                        className="justify-start text-sm"
+                        onClick={() => setMenuOpen(false)}    
+                    >
+                        Close
+                    </Button>
                     <Button 
                         variant="destructive" 
                         className="justify-start text-sm bg-transparent! hover:bg-destructive/20!"
