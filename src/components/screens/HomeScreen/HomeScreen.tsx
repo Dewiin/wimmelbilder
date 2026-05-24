@@ -40,7 +40,7 @@ export function HomeScreen() {
                     initial={{ opacity: 0, y: 1000 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -1000 }}
-                    className="w-full h-full flex flex-col justify-center items-center px-15 gap-8"
+                    className="w-full h-screen flex flex-col justify-center items-center px-15 gap-8"
                 >
                     <p className="text-4xl font-extrabold">
                         BILDER
