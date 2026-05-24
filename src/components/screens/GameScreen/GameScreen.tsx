@@ -29,13 +29,15 @@ export function GameScreen() {
 
     useEffect(() => {
         if (!menuOpen) return;
-
+        
         function handleResize() {
-            const SCROLL_WIDTH = document.documentElement.scrollWidth;
-            const SCROLL_HEIGHT = document.documentElement.scrollHeight;
+            const gameImage = document.getElementById("gameImage");
+            if(!gameImage) return;
+
+            const rect = gameImage.getBoundingClientRect();
             setMenuPosition((prev) => ({
-                x: Math.min(prev.x, SCROLL_WIDTH - DROPDOWN_WIDTH),
-                y: Math.min(prev.y, SCROLL_HEIGHT - DROPDOWN_HEIGHT),
+                x: Math.min(prev.x, rect.width - DROPDOWN_WIDTH),
+                y: Math.min(prev.y, rect.height - DROPDOWN_HEIGHT),
             }));
         }
 
@@ -48,16 +50,19 @@ export function GameScreen() {
 
     function handleClick(e: React.MouseEvent<HTMLImageElement>) {
         const rect = e.currentTarget.getBoundingClientRect();
+        
         const normalizedX = (e.clientX - rect.left) / rect.width;
         const normalizedY = (e.clientY - rect.top) / rect.height;
+        setClickPosition({
+            x: normalizedX,
+            y: normalizedY
+        });
 
-        const SCROLL_WIDTH = document.documentElement.scrollWidth;
-        const SCROLL_HEIGHT = document.documentElement.scrollHeight;
-
-        setClickPosition({x: normalizedX, y: normalizedY});
+        const relativeX = e.clientX - rect.left;
+        const relativeY = e.clientY - rect.top;
         setMenuPosition({
-            x: Math.min(e.pageX, SCROLL_WIDTH - DROPDOWN_WIDTH), 
-            y: Math.min(e.pageY, SCROLL_HEIGHT - DROPDOWN_HEIGHT)
+            x: Math.min(relativeX, rect.width - DROPDOWN_WIDTH),
+            y: Math.min(relativeY, rect.height - DROPDOWN_HEIGHT)
         });
 
         setMenuOpen(true);
@@ -72,6 +77,7 @@ export function GameScreen() {
                 animate={{ opacity: 1, y: 0 }}
             >
                 <img 
+                    id='gameImage'
                     src={map.imageUrl}
                     className="min-w-200"    
                     onClick={(e) => handleClick(e)}
