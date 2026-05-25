@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 
 //api
@@ -97,6 +97,9 @@ export function GameScreen() {
                     menuOpen={menuOpen}
                     setMenuOpen={setMenuOpen} 
                     characters={characters}    
+                    setCharacters={setCharacters}
+                    clickPosition={clickPosition}
+                    mapName={mapName}
                 />
             </motion.div>
             }

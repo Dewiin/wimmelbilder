@@ -1,33 +1,60 @@
 import { useNavigate } from "react-router"
 
+// api
+import { postSubmission } from '@/api/game'
+
 // components
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { LogOut, CircleX } from "lucide-react"
 
+// contexts
+import { useUI } from "@/contexts/UIContext"
+
 // motion
 import { AnimatePresence, motion } from "motion/react"
 
 // types
-import type React from "react"
-import type { SetStateAction } from "react"
+import type { SetStateAction, Dispatch } from "react"
 import type { TCoords } from "@/types/TCoords"
 import type { TCharacter } from "@/types/TCharacter"
 import { CharacterProfile } from "./CharacterProfile"
+import { toast } from "sonner"
 
 type GameDropdownProps = {
     coords: TCoords,
     menuOpen: boolean,
-    setMenuOpen: React.Dispatch<SetStateAction<boolean>>,
-    characters: TCharacter[]
+    setMenuOpen: Dispatch<SetStateAction<boolean>>,
+    characters: TCharacter[],
+    setCharacters: Dispatch<SetStateAction<TCharacter[]>>
+    clickPosition: TCoords,
+    mapName: string|undefined,
 }
 export function GameDropdown({ 
     coords, 
     menuOpen,
     setMenuOpen, 
-    characters 
+    characters,
+    setCharacters,
+    clickPosition,
+    mapName
 }: GameDropdownProps ) {
+    const { setSonner } = useUI();
     const navigate = useNavigate();
+
+    async function handleSubmit(character: TCharacter) {
+        if(!mapName) return;
+
+        const body = {
+            xCoord: clickPosition.x,
+            yCoord: clickPosition.y,
+            clientCharacter: character
+        }
+        toast.promise(
+            postSubmission(body, mapName, setCharacters, setSonner),
+            { loading: `Finding ${character.name}...` }
+        )
+    }
 
     return (
         <AnimatePresence>
@@ -56,9 +83,10 @@ export function GameDropdown({
                 ">
                     {characters.map((character) => (
                         <Button 
-                        key={character.id}
-                        variant="ghost" 
-                        className="justify-start text-xs"
+                            key={character.id}
+                            variant="ghost" 
+                            className="justify-start text-xs"
+                            onClick={() => handleSubmit(character)}
                         >
                             <CharacterProfile 
                                 character={character} 

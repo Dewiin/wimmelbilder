@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router"
 
 // api
 import { getMaps } from "@/api/map"
@@ -14,7 +13,6 @@ import {
 } from "@/components/ui/carousel"
 import { GameCard } from "./GameCard"
 import { GameCardSkeleton } from "@/components/skeletons/GameCardSkeleton"
-import { Button } from "@/components/ui/button"
 
 // contexts
 import { useUI } from "@/contexts/UIContext"
@@ -29,7 +27,6 @@ export function HomeScreen() {
     const [ show, setShow ] = useState<boolean>(true);
     const [ maps, setMaps ] = useState<TMap[]>([]);
     const { isLoading, setIsLoading } = useUI();
-    const navigate = useNavigate();
 
     useEffect(() => {
         if(maps.length == 0) getMaps(setMaps, setIsLoading);

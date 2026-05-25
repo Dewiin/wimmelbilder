@@ -1,12 +1,15 @@
-import type { TSonner } from "@/types/TSonner";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
+
+// types
+import type { Dispatch, ReactNode } from "react";
+import type { TSonner } from "@/types/TSonner";
 
 type UIContextProps = {
     isLoading: boolean
-    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    setIsLoading: Dispatch<React.SetStateAction<boolean>>,
     sonner: TSonner|undefined,
-    setSonner: React.Dispatch<React.SetStateAction<TSonner|undefined>>
+    setSonner: Dispatch<React.SetStateAction<TSonner|undefined>>
 }
 
 const UIContext = createContext<UIContextProps>({
@@ -16,7 +19,7 @@ const UIContext = createContext<UIContextProps>({
     setSonner: () => {}
 });
 
-export default function UIProvider({ children }: { children: React.ReactNode }) {
+export default function UIProvider({ children }: { children: ReactNode }) {
     const [ isLoading, setIsLoading ] = useState<boolean>(false);
     const [ sonner, setSonner ] = useState<TSonner|undefined>();
 
