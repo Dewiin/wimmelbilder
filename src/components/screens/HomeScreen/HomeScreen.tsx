@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router"
 
 // api
 import { getMaps } from "@/api/map"
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/carousel"
 import { GameCard } from "./GameCard"
 import { GameCardSkeleton } from "@/components/skeletons/GameCardSkeleton"
+import { Button } from "@/components/ui/button"
 
 // contexts
 import { useUI } from "@/contexts/UIContext"
@@ -27,6 +29,7 @@ export function HomeScreen() {
     const [ show, setShow ] = useState<boolean>(true);
     const [ maps, setMaps ] = useState<TMap[]>([]);
     const { isLoading, setIsLoading } = useUI();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if(maps.length == 0) getMaps(setMaps, setIsLoading);
@@ -40,10 +43,20 @@ export function HomeScreen() {
                     initial={{ opacity: 0, y: 1000 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -1000 }}
-                    className="w-full h-screen flex flex-col justify-center items-center px-15 gap-8"
+                    className="w-full h-screen flex flex-col justify-center items-center px-15 gap-4"
                 >
-                    <p className="text-4xl font-extrabold">
+                    <p className="text-6xl font-extrabold">
                         BILDER
+                    </p>
+                    <p className="text-sm">
+                        Art by {" "}
+                        <a
+                            href="https://chekavo.artstation.com/"
+                            target="_blank"
+                            className="hover:underline"
+                        >
+                            Egor Klyuchnyk    
+                        </a> 
                     </p>
                     <Carousel className="w-full md:max-w-lg max-w-xs">
                         <CarouselContent>

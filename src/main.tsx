@@ -4,6 +4,9 @@ import { BrowserRouter } from "react-router";
 import './index.css'
 import App from './App.tsx'
 
+// components
+import { Toaster } from "@/components/ui/sonner"
+
 // contexts
 import UIProvider from './contexts/UIContext.tsx';
 
@@ -11,6 +14,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <UIProvider>
+        <Toaster />
         <App />
       </UIProvider>
     </BrowserRouter>
