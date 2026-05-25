@@ -1,6 +1,5 @@
-export type TMap = {
+export type TCharacter = {
     id: string
     name: string
     imageUrl: string
-    description: string
 }
