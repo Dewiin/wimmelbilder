@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 
 //api
-import { getMapByName } from '@/api/map'
+import { getMapAndCharacters } from '@/api/map'
 
 // components
 import { GameDropdown } from './GameDropdown'
+import { GameHUD } from './GameHUD'
 
 // motion
 import { AnimatePresence, motion } from 'motion/react'
@@ -13,18 +14,18 @@ import { AnimatePresence, motion } from 'motion/react'
 // types
 import type { TMap } from '@/types/TMap'
 import type { TCoords } from '@/types/TCoords'
+import type { TCharacter } from '@/types/TCharacter'
 
-const DROPDOWN_WIDTH = 256;
-const DROPDOWN_HEIGHT = 185;
 export function GameScreen() {
     const { mapName } = useParams();
     const [ map, setMap ] = useState<TMap|undefined>();
+    const [ characters, setCharacters ] = useState<TCharacter[]>([]);
     const [ clickPosition, setClickPosition ] = useState<TCoords>({x: 0, y: 0});
     const [ menuPosition, setMenuPosition ] = useState<TCoords>({x: 0, y: 0});
     const [ menuOpen, setMenuOpen ] = useState<boolean>(false);
 
     useEffect(() => {
-        if(mapName) getMapByName(mapName, setMap);
+        if(mapName) getMapAndCharacters(mapName, setMap, setCharacters);
     }, [mapName]);
 
     useEffect(() => {
@@ -32,12 +33,14 @@ export function GameScreen() {
         
         function handleResize() {
             const gameImage = document.getElementById("gameImage");
-            if(!gameImage) return;
+            const gameDropdown = document.getElementById("gameDropdown");
+            if(!gameImage || !gameDropdown) return;
 
-            const rect = gameImage.getBoundingClientRect();
+            const imageRect = gameImage.getBoundingClientRect();
+            const dropdownRect = gameDropdown.getBoundingClientRect();
             setMenuPosition((prev) => ({
-                x: Math.min(prev.x, rect.width - DROPDOWN_WIDTH),
-                y: Math.min(prev.y, rect.height - DROPDOWN_HEIGHT),
+                x: Math.min(prev.x, imageRect.width - dropdownRect.width),
+                y: Math.min(prev.y, imageRect.height - dropdownRect.height),
             }));
         }
 
@@ -48,21 +51,27 @@ export function GameScreen() {
         };
     }, [menuOpen]);
 
-    function handleClick(e: React.MouseEvent<HTMLImageElement>) {
-        const rect = e.currentTarget.getBoundingClientRect();
-        
-        const normalizedX = (e.clientX - rect.left) / rect.width;
-        const normalizedY = (e.clientY - rect.top) / rect.height;
+    function handleClick(e: React.MouseEvent<HTMLImageElement>) {      
+        const gameDropdown = document.getElementById("gameDropdown");
+        if(!gameDropdown) return;
+
+        const imageRect = e.currentTarget.getBoundingClientRect();
+        const gameDropdownRect = gameDropdown.getBoundingClientRect();
+
+        const normalizedX = (e.clientX - imageRect.left) /imageRect.width;
+        const normalizedY = (e.clientY - imageRect.top) /imageRect.height;
         setClickPosition({
             x: normalizedX,
             y: normalizedY
         });
 
-        const relativeX = e.clientX - rect.left;
-        const relativeY = e.clientY - rect.top;
+        console.log("X:", normalizedX, "Y:", normalizedY);
+
+        const relativeX = e.clientX - imageRect.left;
+        const relativeY = e.clientY - imageRect.top;
         setMenuPosition({
-            x: Math.min(relativeX, rect.width - DROPDOWN_WIDTH),
-            y: Math.min(relativeY, rect.height - DROPDOWN_HEIGHT)
+            x: Math.min(relativeX, imageRect.width - gameDropdownRect.width),
+            y: Math.min(relativeY, imageRect.height - gameDropdownRect.height)
         });
 
         setMenuOpen(true);
@@ -79,12 +88,16 @@ export function GameScreen() {
                 <img 
                     id='gameImage'
                     src={map.imageUrl}
-                    className="min-w-200"    
+                    className="min-w-200 w-full"    
                     onClick={(e) => handleClick(e)}
                 />
-                {menuOpen && 
-                    <GameDropdown coords={menuPosition} setMenuOpen={setMenuOpen} />
-                }
+                <GameHUD characters={characters} />
+                <GameDropdown 
+                    coords={menuPosition} 
+                    menuOpen={menuOpen}
+                    setMenuOpen={setMenuOpen} 
+                    characters={characters}    
+                />
             </motion.div>
             }
         </AnimatePresence>
