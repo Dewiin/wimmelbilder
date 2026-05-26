@@ -19,7 +19,9 @@ export async function postSubmission(
         headers: { "Content-Type": "application/json" }
     }, setSonner);
 
-    if(result) setCharacters((prev) => (
-        prev.filter((character) => character.id !== data.clientCharacter.id)
-    ));
+    if(result && result.status === "success") {
+        setCharacters((prev) => (
+            prev.filter((character) => character.id !== data.clientCharacter.id)
+        ));
+    }
 }

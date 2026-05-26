@@ -19,6 +19,8 @@ export async function api(
         return null;
     }
     
-    if(setSonner) setSonner({ variant: "success", title: result.message });
+    if(setSonner) {
+        setSonner({ variant: result.status, title: result.message });
+    }
     return result;
 }

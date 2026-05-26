@@ -52,7 +52,7 @@ export function GameDropdown({
         }
         toast.promise(
             postSubmission(body, mapName, setCharacters, setSonner),
-            { loading: `Finding ${character.name}...` }
+            { loading: `Finding ${character.name}...`, position: "top-right" }
         )
     }
 
@@ -61,20 +61,19 @@ export function GameDropdown({
             <motion.div 
                 id="gameDropdown"
                 initial={{ opacity: 0, scale: 0.75 }}
-                animate={{ 
+                animate={{
                     opacity: 1,
                     scale: 1, 
                     x: coords.x,
                     y: coords.y
                 }}
-                exit={{ opacity: 0, scale: 0.75 }}
                 transition={{
                     type: "spring",
                     stiffness: 700,
                     damping: 40,
                 }}
-                style={{ left: 0, top: 0, visibility: menuOpen ? "visible" : "hidden" }}
-                className="absolute w-fit"
+                style={{ left: 0, top: 0 }}
+                className={`absolute w-fit ${menuOpen ? "visible" : "hidden"}`}
             >
                 <div className=" 
                     flex flex-col 
@@ -86,7 +85,10 @@ export function GameDropdown({
                             key={character.id}
                             variant="ghost" 
                             className="justify-start text-xs"
-                            onClick={() => handleSubmit(character)}
+                            onClick={() => {
+                                setMenuOpen(false);
+                                handleSubmit(character)
+                            }}
                         >
                             <CharacterProfile 
                                 character={character} 

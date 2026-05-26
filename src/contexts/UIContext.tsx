@@ -26,8 +26,8 @@ export default function UIProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         if(!sonner) return;
         
-        if(sonner.variant === "success") toast.success(sonner.title, { description: sonner.description });
-        if(sonner.variant === "error") toast.error(sonner.title, { description: sonner.description });
+        if(sonner.variant === "success") toast.success(sonner.title, { description: sonner.description, position: "top-right", richColors: true });
+        if(sonner.variant === "error") toast.error(sonner.title, { description: sonner.description, position: "top-right", richColors: true });
     }, [sonner]);
 
     const values = {
