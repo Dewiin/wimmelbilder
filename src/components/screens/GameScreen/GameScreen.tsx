@@ -8,6 +8,9 @@ import { getMapAndCharacters } from '@/api/map'
 import { GameDropdown } from './GameDropdown'
 import { GameHUD } from './GameHUD'
 
+// helpers
+import { handleClick, handleResize } from '@/components/helpers/gameScreen'
+
 // motion
 import { AnimatePresence, motion } from 'motion/react'
 
@@ -30,51 +33,13 @@ export function GameScreen() {
 
     useEffect(() => {
         if (!menuOpen) return;
-        
-        function handleResize() {
-            const gameImage = document.getElementById("gameImage");
-            const gameDropdown = document.getElementById("gameDropdown");
-            if(!gameImage || !gameDropdown) return;
-
-            const imageRect = gameImage.getBoundingClientRect();
-            const dropdownRect = gameDropdown.getBoundingClientRect();
-            setMenuPosition((prev) => ({
-                x: Math.min(prev.x, imageRect.width - dropdownRect.width),
-                y: Math.min(prev.y, imageRect.height - dropdownRect.height),
-            }));
-        }
-
-        window.addEventListener("resize", handleResize);
-
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
+        function onResize() { handleResize(setMenuPosition) }
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
     }, [menuOpen]);
 
-    function handleClick(e: React.MouseEvent<HTMLImageElement>) {      
-        const gameDropdown = document.getElementById("gameDropdown");
-        if(!gameDropdown) return;
-
-        const imageRect = e.currentTarget.getBoundingClientRect();
-        const gameDropdownRect = gameDropdown.getBoundingClientRect();
-
-        const normalizedX = (e.clientX - imageRect.left) /imageRect.width;
-        const normalizedY = (e.clientY - imageRect.top) /imageRect.height;
-        setClickPosition({
-            x: normalizedX,
-            y: normalizedY
-        });
-
-        console.log("X:", normalizedX, "Y:", normalizedY);
-
-        const relativeX = e.clientX - imageRect.left;
-        const relativeY = e.clientY - imageRect.top;
-        setMenuPosition({
-            x: Math.min(relativeX, imageRect.width - gameDropdownRect.width),
-            y: Math.min(relativeY, imageRect.height - gameDropdownRect.height)
-        });
-
-        setMenuOpen(true);
+    function onClick(e: React.MouseEvent<HTMLImageElement>) {      
+        handleClick(e, setClickPosition, setMenuPosition, setMenuOpen)
     }
 
     return (
@@ -89,7 +54,7 @@ export function GameScreen() {
                     id='gameImage'
                     src={map.imageUrl}
                     className="min-w-200 w-full"    
-                    onClick={(e) => handleClick(e)}
+                    onClick={(e) => onClick(e)}
                 />
                 <GameHUD characters={characters} />
                 <GameDropdown 
