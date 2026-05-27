@@ -3,10 +3,14 @@ import { useParams } from 'react-router'
 
 //api
 import { getMapAndCharacters } from '@/api/map'
+import { startGameSession, endGameSession } from '@/api/game'
 
 // components
 import { GameDropdown } from './GameDropdown'
 import { GameHUD } from './GameHUD'
+
+// contexts
+import { useUI } from '@/contexts/UIContext'
 
 // helpers
 import { handleClick, handleResize } from '@/components/helpers/gameScreen'
@@ -18,18 +22,28 @@ import { AnimatePresence, motion } from 'motion/react'
 import type { TMap } from '@/types/TMap'
 import type { TCoords } from '@/types/TCoords'
 import type { TCharacter } from '@/types/TCharacter'
+import type { TSession } from '@/types/TSession'
+import { toast } from 'sonner'
 
 export function GameScreen() {
-    const { mapName } = useParams();
+    const [ gameSession, setGameSession ] = useState<TSession|undefined>();
     const [ map, setMap ] = useState<TMap|undefined>();
     const [ characters, setCharacters ] = useState<TCharacter[]>([]);
     const [ clickPosition, setClickPosition ] = useState<TCoords>({x: 0, y: 0});
     const [ menuPosition, setMenuPosition ] = useState<TCoords>({x: 0, y: 0});
     const [ menuOpen, setMenuOpen ] = useState<boolean>(false);
+    
+    const { mapName } = useParams();
+    const { setSonner } = useUI();
 
     useEffect(() => {
-        if(mapName) getMapAndCharacters(mapName, setMap, setCharacters);
-    }, [mapName]);
+        if(mapName) {
+            toast.promise(async () =>{
+                await startGameSession(setGameSession, setSonner);
+                await getMapAndCharacters(mapName, setMap, setCharacters);
+            }, { loading: "Starting game session...", position: "top-right" })
+        }
+    }, [gameSession]);
 
     useEffect(() => {
         if (!menuOpen) return;
@@ -39,7 +53,7 @@ export function GameScreen() {
     }, [menuOpen]);
 
     function onClick(e: React.MouseEvent<HTMLImageElement>) {      
-        handleClick(e, setClickPosition, setMenuPosition, setMenuOpen)
+        handleClick(e, setClickPosition, setMenuPosition, setMenuOpen);
     }
 
     return (
