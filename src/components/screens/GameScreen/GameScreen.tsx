@@ -43,8 +43,8 @@ export function GameScreen() {
     }, [mapName]);
 
     useEffect(() => {
-        if(!gameCompleted || !gameSession) return;
-        toast.promise(endGameSession(gameSession.id, setGameSession, setSonner), {
+        if(!gameCompleted || !gameSession || !mapName) return;
+        toast.promise(endGameSession(gameSession.id, mapName, setSonner, setGameSession), {
             loading: "Ending game session...",
             position: "top-right"
         });

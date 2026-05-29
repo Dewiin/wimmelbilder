@@ -27,6 +27,9 @@ import { toast } from "sonner";
 // contexts
 import { useUI } from "@/contexts/UIContext";
 
+// helpers
+import { formatScore } from "@/components/helpers/score";
+
 // motion
 import { AnimatePresence, motion } from "motion/react"
 
@@ -89,7 +92,10 @@ export function GameComplete({ gameSession, mapName }: { gameSession: TSession, 
                             <p
                                 className="font-extrabold my-4 text-center text-2xl"
                             >
-                                {(new Date(gameSession.completedAt).getTime() - new Date(gameSession.createdAt).getTime())/1000} seconds
+                                {formatScore(
+                                    new Date(gameSession.completedAt).getTime() - 
+                                    new Date(gameSession.createdAt).getTime())
+                                } seconds
                             </p>
                             }
                             <form onSubmit={form.handleSubmit(handleSubmit)}>

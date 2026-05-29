@@ -1,8 +1,5 @@
 import { useState } from "react"
 
-// api
-import { getLeaderboard } from "@/api/map"
-
 // components
 import { GamePreview } from "./GamePreview"
 import { GameLeaderboard } from "./GameLeaderboard"

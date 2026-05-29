@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router"
 
 // api
-import { postSubmission } from '@/api/game'
+import { endGameSession, postSubmission } from '@/api/game'
 
 // components
 import { Separator } from "@/components/ui/separator"
@@ -61,6 +61,14 @@ export function GameDropdown({
         )
     }
 
+    async function handleQuit() {
+        try {
+            await endGameSession(sessionId, mapName, setSonner);
+        } finally {
+            navigate('/');
+        }
+    }
+
     return (
         <AnimatePresence>
             <motion.div 
@@ -116,7 +124,7 @@ export function GameDropdown({
                     <Button 
                         variant="destructive" 
                         className="justify-start text-xs bg-transparent! hover:bg-destructive/20!"
-                        onClick={() => navigate("/")}    
+                        onClick={() => handleQuit()}    
                         >
                         <LogOut size={12} />
                         Quit Game

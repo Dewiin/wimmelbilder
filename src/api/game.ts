@@ -51,8 +51,9 @@ export async function startGameSession(
 
 export async function endGameSession(
     sessionId: string,
-    setGameSession: Dispatch<SetStateAction<TSession|undefined>>,
+    mapName: string,
     setSonner: Dispatch<SetStateAction<TSonner|undefined>>,
+    setGameSession?: Dispatch<SetStateAction<TSession|undefined>>,
 ) {
     const result = await api(`/api/game/end`, {
         method: "POST",
@@ -60,7 +61,11 @@ export async function endGameSession(
         headers: { "Content-Type": "application/json" }
     }, setSonner);
 
-    if(result) setGameSession(result.updatedSession);
+    if(result) {
+        if(setGameSession) setGameSession(result.updatedSession);
+
+        localStorage.removeItem(`gameSession-${mapName}`);
+    }
 }
 
 export async function submitName(
