@@ -24,7 +24,6 @@ import { AnimatePresence, motion } from "motion/react"
 import type { TMap } from "@/types/TMap"
 
 export function HomeScreen() {
-    const [ show, setShow ] = useState<boolean>(true);
     const [ maps, setMaps ] = useState<TMap[]>([]);
     const { isLoading, setIsLoading } = useUI();
 
@@ -35,26 +34,27 @@ export function HomeScreen() {
     return (
         <>
             <AnimatePresence>
-                {show && 
                 <motion.div 
                     initial={{ opacity: 0, y: 1000 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -1000 }}
-                    className="w-full h-screen flex flex-col justify-center items-center px-15 gap-4"
-                >
-                    <p className="text-6xl font-extrabold">
-                        BILDER
-                    </p>
-                    <p className="text-sm">
-                        Art by {" "}
-                        <a
-                            href="https://chekavo.artstation.com/"
-                            target="_blank"
-                            className="hover:underline"
-                        >
-                            Egor Klyuchnyk    
-                        </a> 
-                    </p>
+                    className="w-full h-screen flex flex-col justify-center items-center px-15 md:gap-8 gap-4"
+                >   
+                    <div className="text-center">
+                        <p className="text-6xl font-extrabold">
+                            BILDER
+                        </p>
+                        <p className="text-sm">
+                            Art by {" "}
+                            <a
+                                href="https://chekavo.artstation.com/"
+                                target="_blank"
+                                className="hover:underline"
+                                >
+                                Egor Klyuchnyk    
+                            </a> 
+                        </p>
+                    </div>
                     <Carousel className="w-full md:max-w-lg max-w-xs">
                         <CarouselContent>
                             {isLoading &&
@@ -66,7 +66,7 @@ export function HomeScreen() {
                             <>
                                 {maps.map((map, index) => (
                                     <CarouselItem key={index}>
-                                        <GameCard map={map} setShow={setShow} />
+                                        <GameCard map={map} />
                                     </CarouselItem>
                                 ))}
                             </>
@@ -76,7 +76,6 @@ export function HomeScreen() {
                         <CarouselPrevious />
                     </Carousel>
                 </motion.div>  
-                } 
             </AnimatePresence>
         </>
     )

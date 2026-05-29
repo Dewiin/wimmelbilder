@@ -31,6 +31,7 @@ export async function postSubmission(
 }
 
 export async function startGameSession(
+    mapName: string,
     setGameSession: Dispatch<SetStateAction<TSession|undefined>>,
     setSonner: Dispatch<SetStateAction<TSonner|undefined>>,
 ) {
@@ -38,7 +39,14 @@ export async function startGameSession(
         method: "POST"
     }, setSonner);
 
-    if(result) setGameSession(result.gameSession);
+    if(result) {
+        setGameSession(result.gameSession);
+
+        localStorage.setItem(
+            `gameSession-${mapName}`,
+            JSON.stringify(result.gameSession)
+        );
+    };
 }
 
 export async function endGameSession(
@@ -60,9 +68,10 @@ export async function submitName(
         sessionId: string,
         username: string, 
     },
+    mapName: string,
     setSonner: Dispatch<SetStateAction<TSonner|undefined>>
 ) {
-    const result = await api(`/api/game/score`, {
+    const result = await api(`/api/game/${mapName}/score`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: { "Content-Type": "application/json" }

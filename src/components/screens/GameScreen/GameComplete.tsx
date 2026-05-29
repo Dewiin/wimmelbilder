@@ -36,7 +36,7 @@ import { victorySchema } from "@/components/schemas/victorySchema"
 // types
 import type { TSession } from "@/types/TSession";
 
-export function GameComplete({ gameSession }: { gameSession: TSession}) {
+export function GameComplete({ gameSession, mapName }: { gameSession: TSession, mapName: string}) {
     const { setSonner } = useUI();
     const navigate = useNavigate();
 
@@ -54,7 +54,7 @@ export function GameComplete({ gameSession }: { gameSession: TSession}) {
             username: data.name
         }
         toast.promise(async () => {
-            const result = await submitName(body, setSonner);
+            const result = await submitName(body, mapName, setSonner);
             if(result) navigate("/");
         }, {
             loading: "Submitting name...",

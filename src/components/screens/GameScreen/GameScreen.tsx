@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 
 //api
-import { getMapAndCharacters } from '@/api/map'
-import { startGameSession, endGameSession } from '@/api/game'
+import { endGameSession } from '@/api/game'
 
 // components
 import { GameDropdown } from './GameDropdown'
@@ -14,7 +13,7 @@ import { GameComplete } from './GameComplete'
 import { useUI } from '@/contexts/UIContext'
 
 // helpers
-import { handleClick, handleResize } from '@/components/helpers/gameScreen'
+import { handleClick, handleResize, initializeGame } from '@/components/helpers/gameScreen'
 
 // motion
 import { AnimatePresence, motion } from 'motion/react'
@@ -39,22 +38,12 @@ export function GameScreen() {
     const { setSonner } = useUI();
 
     useEffect(() => {
-        if(!mapName || gameSession) return;
-
-        toast.promise(async () => {
-            await Promise.all([
-                startGameSession(setGameSession, setSonner),
-                getMapAndCharacters(mapName, setMap, setCharacters)
-            ]);
-        }, { 
-            loading: "Starting game session...", 
-            position: "top-right" 
-        });
-    }, [mapName, gameSession]);
+        if(!mapName) return;
+        initializeGame(mapName, setGameSession, setMap, setCharacters, setSonner);
+    }, [mapName]);
 
     useEffect(() => {
         if(!gameCompleted || !gameSession) return;
-
         toast.promise(endGameSession(gameSession.id, setGameSession, setSonner), {
             loading: "Ending game session...",
             position: "top-right"
@@ -103,8 +92,10 @@ export function GameScreen() {
                     sessionId={gameSession.id}
                     setGameCompleted={setGameCompleted}
                 />
-                { gameCompleted && gameSession.completedAt &&
-                    <GameComplete gameSession={gameSession} />
+                { mapName 
+                && gameCompleted
+                && gameSession.completedAt 
+                && <GameComplete gameSession={gameSession} mapName={mapName} />
                 }
             </motion.div>
             }

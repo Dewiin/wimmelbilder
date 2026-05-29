@@ -1,5 +1,18 @@
 import type { Dispatch, SetStateAction, MouseEvent } from "react";
+
+// api
+import { startGameSession } from "@/api/game";
+import { getMapAndCharacters } from "@/api/map";
+
+// components
+import { toast } from "sonner";
+
+// types
 import type { TCoords } from "@/types/TCoords";
+import type { TSession } from "@/types/TSession";
+import type { TCharacter } from "@/types/TCharacter";
+import type { TMap } from "@/types/TMap";
+import type { TSonner } from "@/types/TSonner";
 
 export function handleResize(
     setMenuPosition: Dispatch<SetStateAction<TCoords>>
@@ -43,4 +56,31 @@ export function handleClick(
     });
 
     setMenuOpen(true);
+}
+
+export async function initializeGame(
+    mapName: string,
+    setGameSession: Dispatch<SetStateAction<TSession|undefined>>,
+    setMap: Dispatch<SetStateAction<TMap|undefined>>,
+    setCharacters: Dispatch<SetStateAction<TCharacter[]>>,
+    setSonner: Dispatch<SetStateAction<TSonner|undefined>>
+) {
+    const savedSession =
+        localStorage.getItem(`gameSession-${mapName}`);
+
+    if (savedSession) {
+        setGameSession(JSON.parse(savedSession));
+        await getMapAndCharacters(mapName, setMap, setCharacters);
+        return;
+    }
+
+    toast.promise(async () => {
+        await Promise.all([
+            startGameSession(mapName, setGameSession, setSonner),
+            getMapAndCharacters(mapName, setMap, setCharacters)
+        ]);
+    }, {
+        loading: "Starting game session...",
+        position: "top-right",
+    });
 }

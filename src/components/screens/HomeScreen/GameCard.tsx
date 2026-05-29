@@ -1,48 +1,28 @@
-import { useNavigate } from "react-router"
+import { useState } from "react"
+
+// api
+import { getLeaderboard } from "@/api/map"
 
 // components
-import { 
-    Card, 
-    CardHeader,
-    CardTitle,
-    CardDescription,
-    CardFooter
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { GamePreview } from "./GamePreview"
+import { GameLeaderboard } from "./GameLeaderboard"
 
 // types
 import type { TMap } from "@/types/TMap"
+import type { TScore } from "@/types/TScore"
 
-export function GameCard({ map, setShow }: { map: TMap, setShow: Function }) {
-    const navigate = useNavigate();
-
-    async function handleNavigate() {
-        setShow(false);
-
-        setTimeout(() => {
-            navigate(`/game/${map.name}`);
-        }, 300);
-    }
+export function GameCard({ map }: { map: TMap }) {
+    const [ leaderboard, setLeaderboard ] = useState<TScore[]>([]);
+    const [ showLeaderboard, setShowLeaderboard ] = useState<boolean>(false);
 
     return (
-        <Card className="w-full">
-            <img
-                src={ map.imageUrl }
-                alt="Map cover"
-                className="relative z-20 aspect-square object-cover grayscale-25"
-                />
-            <CardHeader>
-                <CardTitle>{map.name.toLocaleUpperCase()}</CardTitle>
-                <CardDescription>{map.description}</CardDescription>
-            </CardHeader>
-            <CardFooter>
-                <Button 
-                    className="w-full cursor-pointer hover:bg-muted-foreground transition-colors duration-150 ease-in-out"
-                    onClick={() => handleNavigate()}
-                    >
-                    Play Game
-                </Button>
-            </CardFooter>
-        </Card>
+        <>
+        {!showLeaderboard && 
+            <GamePreview map={map} leaderboard={leaderboard} setLeaderboard={setLeaderboard} setShowLeaderboard={setShowLeaderboard} />
+        }
+        {showLeaderboard && 
+            <GameLeaderboard map={map} leaderboard={leaderboard} setShowLeaderboard={setShowLeaderboard} />
+        }
+        </>
     )
 }
