@@ -13,18 +13,20 @@ export async function postSubmission(
     },
     mapName: string,
     setCharacters: Dispatch<SetStateAction<TCharacter[]>>,
-    setSonner: Dispatch<SetStateAction<TSonner|undefined>>
+    setSonner: Dispatch<SetStateAction<TSonner|undefined>>,
+    setGameCompleted: Dispatch<SetStateAction<boolean>>
 ) {
     const result = await api(`/api/game/${mapName}`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: { "Content-Type": "application/json" }
     }, setSonner);
-
+    
     if(result && result.status === "success") {
         setCharacters((prev) => (
             prev.filter((character) => character.id !== data.clientCharacter.id)
         ));
+        setGameCompleted(result.completed);
     }
 }
 
@@ -39,6 +41,16 @@ export async function startGameSession(
     if(result) setGameSession(result.gameSession);
 }
 
-export async function endGameSession() {
+export async function endGameSession(
+    sessionId: string,
+    setGameSession: Dispatch<SetStateAction<TSession|undefined>>,
+    setSonner: Dispatch<SetStateAction<TSonner|undefined>>,
+) {
+    const result = await api(`/api/game/end`, {
+        method: "POST",
+        body: JSON.stringify({ sessionId }),
+        headers: { "Content-Type": "application/json" }
+    }, setSonner);
 
+    if(result) setGameSession(result.updatedSession);
 }
