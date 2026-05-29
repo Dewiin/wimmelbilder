@@ -35,8 +35,6 @@ export function handleClick(
         y: normalizedY
     });
 
-    console.log("X:", normalizedX, "Y:", normalizedY);
-
     const relativeX = e.clientX - imageRect.left;
     const relativeY = e.clientY - imageRect.top;
     setMenuPosition({
