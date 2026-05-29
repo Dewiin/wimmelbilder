@@ -37,13 +37,18 @@ export function GameScreen() {
     const { setSonner } = useUI();
 
     useEffect(() => {
-        if(mapName) {
-            toast.promise(async () =>{
-                await startGameSession(setGameSession, setSonner);
-                await getMapAndCharacters(mapName, setMap, setCharacters);
-            }, { loading: "Starting game session...", position: "top-right" })
-        }
-    }, [gameSession]);
+        if(!mapName || gameSession) return;
+
+        toast.promise(async () => {
+            await Promise.all([
+                startGameSession(setGameSession, setSonner),
+                getMapAndCharacters(mapName, setMap, setCharacters)
+            ]);
+        }, { 
+            loading: "Starting game session...", 
+            position: "top-right" 
+        });
+    }, [mapName, gameSession]);
 
     useEffect(() => {
         if (!menuOpen) return;
@@ -58,7 +63,7 @@ export function GameScreen() {
 
     return (
         <AnimatePresence>
-            {map && 
+            {map && gameSession && 
             <motion.div
                 className="relative overflow-auto"
                 initial={{ opacity: 0, y: 1000 }}
@@ -78,7 +83,8 @@ export function GameScreen() {
                     characters={characters}    
                     setCharacters={setCharacters}
                     clickPosition={clickPosition}
-                    mapName={mapName}
+                    mapName={map.name}
+                    sessionId={gameSession.id}
                 />
             </motion.div>
             }
