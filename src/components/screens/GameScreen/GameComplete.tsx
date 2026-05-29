@@ -1,6 +1,10 @@
+import { useNavigate } from "react-router";
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import z from "zod";
+
+// api
+import { submitName } from "@/api/game";
 
 // components
 import { 
@@ -8,8 +12,7 @@ import {
     CardHeader,
     CardTitle,
     CardDescription,
-    CardContent,
-    CardFooter
+    CardContent
 } from "@/components/ui/card"
 import {
     FieldGroup,
@@ -19,6 +22,10 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+// contexts
+import { useUI } from "@/contexts/UIContext";
 
 // motion
 import { AnimatePresence, motion } from "motion/react"
@@ -30,6 +37,9 @@ import { victorySchema } from "@/components/schemas/victorySchema"
 import type { TSession } from "@/types/TSession";
 
 export function GameComplete({ gameSession }: { gameSession: TSession}) {
+    const { setSonner } = useUI();
+    const navigate = useNavigate();
+
     const form = useForm<z.infer<typeof victorySchema>>({
         resolver: zodResolver(victorySchema),
         defaultValues: {
@@ -39,7 +49,17 @@ export function GameComplete({ gameSession }: { gameSession: TSession}) {
     });
 
     async function handleSubmit(data: z.infer<typeof victorySchema>) {
-
+        const body = {
+            sessionId: gameSession.id,
+            username: data.name
+        }
+        toast.promise(async () => {
+            const result = await submitName(body, setSonner);
+            if(result) navigate("/");
+        }, {
+            loading: "Submitting name...",
+            position: "top-right",
+        });
     }
 
     return (
@@ -57,7 +77,7 @@ export function GameComplete({ gameSession }: { gameSession: TSession}) {
                         stiffness: 700,
                         damping: 40,
                     }}
-                    className="md:w-md w-xs h-[80%]"
+                    className="md:w-md w-xs"
                 >
                     <Card className="w-full h-fit p-8">
                         <CardHeader className="text-center">
@@ -65,6 +85,13 @@ export function GameComplete({ gameSession }: { gameSession: TSession}) {
                             <CardDescription> Enter your name to the leaderboard! </CardDescription>
                         </CardHeader>
                         <CardContent>
+                            {gameSession.completedAt &&
+                            <p
+                                className="font-extrabold my-4 text-center text-2xl"
+                            >
+                                {(new Date(gameSession.completedAt).getTime() - new Date(gameSession.createdAt).getTime())/1000} seconds
+                            </p>
+                            }
                             <form onSubmit={form.handleSubmit(handleSubmit)}>
                                 <FieldGroup>
                                     <Controller

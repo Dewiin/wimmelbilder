@@ -54,3 +54,19 @@ export async function endGameSession(
 
     if(result) setGameSession(result.updatedSession);
 }
+
+export async function submitName(
+    data: {
+        sessionId: string,
+        username: string, 
+    },
+    setSonner: Dispatch<SetStateAction<TSonner|undefined>>
+) {
+    const result = await api(`/api/game/score`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
+    }, setSonner);
+
+    return result;
+}
