@@ -29,7 +29,8 @@ type GameDropdownProps = {
     setCharacters: Dispatch<SetStateAction<TCharacter[]>>
     clickPosition: TCoords,
     mapName: string,
-    sessionId: string
+    sessionId: string,
+    setGameCompleted: Dispatch<SetStateAction<boolean>>
 }
 export function GameDropdown({ 
     coords, 
@@ -39,7 +40,8 @@ export function GameDropdown({
     setCharacters,
     clickPosition,
     mapName,
-    sessionId
+    sessionId,
+    setGameCompleted
 }: GameDropdownProps ) {
     const { setSonner } = useUI();
     const navigate = useNavigate();
@@ -54,7 +56,7 @@ export function GameDropdown({
             clientCharacter: character
         }
         toast.promise(
-            postSubmission(body, mapName, setCharacters, setSonner),
+            postSubmission(body, mapName, setCharacters, setSonner, setGameCompleted),
             { loading: `Finding ${character.name}...`, position: "top-right" }
         )
     }

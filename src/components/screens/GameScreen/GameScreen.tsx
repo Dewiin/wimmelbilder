@@ -8,6 +8,7 @@ import { startGameSession, endGameSession } from '@/api/game'
 // components
 import { GameDropdown } from './GameDropdown'
 import { GameHUD } from './GameHUD'
+import { GameComplete } from './GameComplete'
 
 // contexts
 import { useUI } from '@/contexts/UIContext'
@@ -32,6 +33,7 @@ export function GameScreen() {
     const [ clickPosition, setClickPosition ] = useState<TCoords>({x: 0, y: 0});
     const [ menuPosition, setMenuPosition ] = useState<TCoords>({x: 0, y: 0});
     const [ menuOpen, setMenuOpen ] = useState<boolean>(false);
+    const [ gameCompleted, setGameCompleted ] = useState<boolean>(false);
     
     const { mapName } = useParams();
     const { setSonner } = useUI();
@@ -51,6 +53,15 @@ export function GameScreen() {
     }, [mapName, gameSession]);
 
     useEffect(() => {
+        if(!gameCompleted || !gameSession) return;
+
+        toast.promise(endGameSession(gameSession.id, setGameSession, setSonner), {
+            loading: "Ending game session...",
+            position: "top-right"
+        });
+    }, [gameCompleted])
+
+    useEffect(() => {
         if (!menuOpen) return;
         function onResize() { handleResize(setMenuPosition) }
         window.addEventListener("resize", onResize);
@@ -68,6 +79,11 @@ export function GameScreen() {
                 className="relative overflow-auto"
                 initial={{ opacity: 0, y: 1000 }}
                 animate={{ opacity: 1, y: 0 }}
+                transition={{
+                    type: "spring",
+                    stiffness: 700,
+                    damping: 40,
+                }}
             >
                 <img 
                     id='gameImage'
@@ -85,7 +101,11 @@ export function GameScreen() {
                     clickPosition={clickPosition}
                     mapName={map.name}
                     sessionId={gameSession.id}
+                    setGameCompleted={setGameCompleted}
                 />
+                { gameCompleted && gameSession.completedAt &&
+                    <GameComplete gameSession={gameSession} />
+                }
             </motion.div>
             }
         </AnimatePresence>
