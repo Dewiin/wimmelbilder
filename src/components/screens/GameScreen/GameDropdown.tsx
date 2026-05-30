@@ -63,7 +63,10 @@ export function GameDropdown({
 
     async function handleQuit() {
         try {
-            await endGameSession(sessionId, mapName, setSonner);
+            toast.promise(endGameSession(sessionId, mapName, setSonner), {
+                loading: "Quitting game...",
+                position: "top-right"
+            })
         } finally {
             navigate('/');
         }

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 
 //api
-import { endGameSession } from '@/api/game'
+import { endGameSession, getGameSession } from '@/api/game'
 
 // components
 import { GameDropdown } from './GameDropdown'
@@ -39,8 +39,19 @@ export function GameScreen() {
 
     useEffect(() => {
         if(!mapName) return;
-        initializeGame(mapName, setGameSession, setMap, setCharacters, setSonner);
-    }, [mapName]);
+        toast.promise( async() => {
+            await initializeGame(mapName, setGameSession, setMap, setCharacters, setSonner);
+        }, {
+            loading: "Loading...",
+            position: "top-right"
+        })
+    }, []);
+
+    useEffect(() => {
+        if(!gameSession) return;
+
+        getGameSession(gameSession.id, setCharacters);
+    }, [gameSession])
 
     useEffect(() => {
         if(!gameCompleted || !gameSession || !mapName) return;

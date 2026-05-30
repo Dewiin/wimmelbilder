@@ -35,7 +35,7 @@ export async function startGameSession(
     setGameSession: Dispatch<SetStateAction<TSession|undefined>>,
     setSonner: Dispatch<SetStateAction<TSonner|undefined>>,
 ) {
-    const result = await api('/api/game/start', {
+    const result = await api('/api/game/session/start', {
         method: "POST"
     }, setSonner);
 
@@ -55,9 +55,8 @@ export async function endGameSession(
     setSonner: Dispatch<SetStateAction<TSonner|undefined>>,
     setGameSession?: Dispatch<SetStateAction<TSession|undefined>>,
 ) {
-    const result = await api(`/api/game/end`, {
+    const result = await api(`/api/game/session/${sessionId}/end`, {
         method: "POST",
-        body: JSON.stringify({ sessionId }),
         headers: { "Content-Type": "application/json" }
     }, setSonner);
 
@@ -65,6 +64,22 @@ export async function endGameSession(
         if(setGameSession) setGameSession(result.updatedSession);
 
         localStorage.removeItem(`gameSession-${mapName}`);
+    }
+}
+
+export async function getGameSession(
+    sessionId: string,
+    setCharacters: Dispatch<SetStateAction<TCharacter[]>>
+) {
+    const result = await api(`/api/game/session/${sessionId}`, {
+        method: "GET",
+    });
+
+    if(result) {
+        setCharacters((prev) => (
+            prev.filter((character) => 
+                !result.gameSession.found.some((found: any) => character.id === found.characterId)
+        )));
     }
 }
 

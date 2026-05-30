@@ -3,6 +3,7 @@ import type { Dispatch, SetStateAction, MouseEvent } from "react";
 // api
 import { startGameSession } from "@/api/game";
 import { getMapAndCharacters } from "@/api/map";
+import { getGameSession } from "@/api/game";
 
 // components
 import { toast } from "sonner";
@@ -65,22 +66,20 @@ export async function initializeGame(
     setCharacters: Dispatch<SetStateAction<TCharacter[]>>,
     setSonner: Dispatch<SetStateAction<TSonner|undefined>>
 ) {
-    const savedSession =
-        localStorage.getItem(`gameSession-${mapName}`);
-
+    await getMapAndCharacters(mapName, setMap, setCharacters);
+    
+    const savedSession = localStorage.getItem(`gameSession-${mapName}`);
     if (savedSession) {
         setGameSession(JSON.parse(savedSession));
-        await getMapAndCharacters(mapName, setMap, setCharacters);
         return;
     }
 
     toast.promise(async () => {
         await Promise.all([
             startGameSession(mapName, setGameSession, setSonner),
-            getMapAndCharacters(mapName, setMap, setCharacters)
         ]);
     }, {
-        loading: "Starting game session...",
+        loading: "Creating game session...",
         position: "top-right",
     });
 }
