@@ -3,7 +3,6 @@ import type { Dispatch, SetStateAction, MouseEvent } from "react";
 // api
 import { startGameSession } from "@/api/game";
 import { getMapAndCharacters } from "@/api/map";
-import { getGameSession } from "@/api/game";
 
 // components
 import { toast } from "sonner";

@@ -12,8 +12,9 @@ export function CharacterProfile({
     ...props 
 }: CharacterProfileProps) {
     return (
-        <div className={`${cn} border-white w-fit`}>
+        <div className={`${cn}`}>
             <img 
+                className="rounded-sm"
                 src={character.imageUrl}  
                 {...props}
             />
