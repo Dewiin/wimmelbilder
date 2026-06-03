@@ -27,7 +27,7 @@ export function GameHUD({ characters }: { characters: TCharacter[] } ) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ type: "spring", damping: 15 }}
                     className="fixed top-2 left-0 
-                    w-full flex justify-center"
+                    w-full flex justify-center z-99"
                 >
                     <div
                         className="bg-white p-0.5 rounded-sm 

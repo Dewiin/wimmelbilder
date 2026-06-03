@@ -15,10 +15,19 @@ export function GameCard({ map }: { map: TMap }) {
     return (
         <>
         {!showLeaderboard && 
-            <GamePreview map={map} leaderboard={leaderboard} setLeaderboard={setLeaderboard} setShowLeaderboard={setShowLeaderboard} />
+            <GamePreview 
+            map={map} 
+            leaderboard={leaderboard} 
+            setLeaderboard={setLeaderboard} 
+            setShowLeaderboard={setShowLeaderboard} 
+            />
         }
         {showLeaderboard && 
-            <GameLeaderboard map={map} leaderboard={leaderboard} setShowLeaderboard={setShowLeaderboard} />
+            <GameLeaderboard 
+            map={map} 
+            leaderboard={leaderboard} 
+            setShowLeaderboard={setShowLeaderboard} 
+            />
         }
         </>
     )

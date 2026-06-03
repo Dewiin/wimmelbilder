@@ -49,7 +49,6 @@ export function GameScreen() {
 
     useEffect(() => {
         if(!gameSession) return;
-
         getGameSession(gameSession.id, setCharacters);
     }, [gameSession])
 

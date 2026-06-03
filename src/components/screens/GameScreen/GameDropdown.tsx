@@ -107,8 +107,7 @@ export function GameDropdown({
                             }}
                         >
                             <CharacterProfile 
-                                character={character} 
-                                cn="border-l-1 border-t-1"
+                                character={character}
                                 width={24} 
                             />
                             {character.name}
